@@ -466,3 +466,22 @@ if ("serviceWorker" in navigator) {
     });
   }
   
+
+// to force full screen
+  function goFullScreen() {
+    const elem = document.documentElement; // this makes the whole page fullscreen
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+  }
+  
+  // Call this when user taps the start button
+  start_btn.addEventListener("click", () => {
+    goFullScreen();
+    start(); // or whatever function starts your game
+  });
+  
