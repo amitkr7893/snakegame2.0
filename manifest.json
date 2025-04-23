@@ -5,6 +5,7 @@
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#00ff00",
+  "orientation": "landscape",
   "icons": [
     {
       "src": "snake_logo.png",
