@@ -43,17 +43,17 @@ const cl = [
     "#da005b",
 ];
 
-// let i = Math.floor(Math.random() * (6 - 0 + 1) - 0);
-// let j = i;
-// document.documentElement.style.setProperty("--food_color", cl[i]);
+let i = Math.floor(Math.random() * (6 - 0 + 1) - 0);
+let j = i;
+document.documentElement.style.setProperty("--food_color", cl[i]);
 
-// function change_color() {
-//     i = Math.floor(Math.random() * (6 - 0 + 1) - 0);
+function change_color() {
+    i = Math.floor(Math.random() * (6 - 0 + 1) - 0);
 
-//     document.documentElement.style.setProperty("--food_color", cl[i]);
-//     document.documentElement.style.setProperty("--body_color", cl[j]);
-//     j = i;
-// }
+    document.documentElement.style.setProperty("--food_color", cl[i]);
+    // document.documentElement.style.setProperty("--body_color", cl[j]);
+    j = i;
+}
 
 // Game functions//
 function speedup() {
@@ -116,7 +116,7 @@ let dirChanged2 = false;
 let start_btn = document.getElementById("start_btn");
 let result = document.getElementById("result");
 
-document.getElementById('result'),addEventListener('click',(e)=>{
+result.addEventListener('click',()=>{
     result.style.display = 'none';
 })
 
@@ -128,7 +128,7 @@ function gameEngine() {
         let a = 1;
         let b = 30;
         eat.play();
-        // change_color();
+        change_color();
         for (let i = 0; i < snakeArr.length; i++) {
             let foodx = Math.round(a + (b - a) * Math.random());
             let foody = Math.round(a + (b - a) * Math.random());
@@ -154,7 +154,7 @@ function gameEngine() {
         let a = 1;
         let b = 30;
         eat.play();
-        // change_color();
+        change_color();
         for (let i = 0; i < snakeArr2.length; i++) {
             let foodx = Math.round(a + (b - a) * Math.random());
             let foody = Math.round(a + (b - a) * Math.random());
@@ -455,3 +455,14 @@ function fun(x,p) {
         }
     }
 }
+
+// To Register the Service Worker in index.js
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((reg) => console.log("Service Worker registered", reg))
+        .catch((err) => console.error("Service Worker registration failed", err));
+    });
+  }
+  
