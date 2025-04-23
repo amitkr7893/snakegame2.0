@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+*{
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+    font-family: Roboto;
+    user-select: none;
+}
+:root{
+    --food_color : #daae00;
+    --body_color : #ea371c;
+    --body_color2 : #2590ee;
+}
+body{
+    height: 100vh;
+    width: 100vw;
+    /* background: linear-gradient(45deg, rgb(69, 14, 39),rgb(11, 0, 37)); */
+    /* background-size: .6rem .6rem;
+     */
+     background: black;
+}
+#scorediv{
+    position: relative;
+    top: 2%;
+    /* left: 50%; */
+    height: max-content;
+    padding: 1rem;
+    width: 100vw;
+    /* width: max-content; */
+    display: flex;
+    /* flex-direction: column; */
+    transform: translate(0%,0%);
+    justify-content: space-evenly;
+    align-items: center;
+}
+#scorebox1,#scorebox2{
+    color: rgb(211, 211, 211);
+    font-weight: 500;
+    text-transform: uppercase;
+}
+#scorebox1{
+    transform: rotate(180deg);
+}
+#board_cont{
+    height: 100vh;
+    width: 100vw;
+    padding: 1rem 0rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+#board{
+    min-width: 70vmin;
+    min-height: 70vmin;
+    display: grid;
+    grid-template-rows: repeat(30,1fr);
+    grid-template-columns: repeat(30,1fr);
+    box-shadow:
+    0 0 6px rgb(199, 0, 0),
+    inset 0 0 6px rgb(199, 0, 0);
+    border: 2px solid rgb(199, 0, 0);
+    background-color: rgb(0, 0, 0);
+}
+#playb_box{
+    height: 10rem;
+    width: 10rem;
+    position: relative;
+    /* margin: 2rem 0; */
+    border-radius: 2rem;
+    background: rgba(65, 65, 65, 0.5);
+
+}
+
+.play_btn{
+    position: absolute;
+    height: 2.6rem;
+    width: 2.6rem;
+    border: none;
+    padding: 1vmin;
+    background: var(--body_color2);
+    visibility: visible;
+    border-radius: 6px;
+    z-index: 10;
+    box-shadow: 2px 2px 6px black;
+}
+.play_btn span{
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    border-bottom-left-radius: 0%;
+    border-bottom-right-radius: 0%;
+    box-shadow: 1px 1px 4px black;
+    
+    /* background-color: ; */
+}
+.p_btn1{
+    background: var(--body_color);
+}
+#start_btn:hover,.play_btn:hover{
+    opacity: .7;
+}
+#btn_up{
+    top: 6%;
+    left: 50%;
+    /* clip-path: polygon(100% 100%, 0% 100%, 50% 20%); */
+    transform: translate(-50%,0%);
+}
+#btn_right{
+    top: 50%;
+    left: 94%;
+    /* clip-path: polygon(80% 50%, 0% 0%, 0% 100%); */
+    transform: translate(-100%,-50%);
+}
+#btn_right span{
+    border-radius: 50%;
+    border-top-left-radius: 0%;
+    border-bottom-left-radius: 0%;
+    
+}
+#btn_down{
+    bottom: 6%;
+    left: 50%;
+    /* clip-path: polygon(50% 80%, 0% 0%, 100% 0%); */
+    transform: translate(-50%,0%);
+}
+#btn_down span{
+    border-radius: 50%;
+    border-top-left-radius: 0%;
+    border-top-right-radius: 0%;
+    
+}
+#btn_left{
+    top: 50%;
+    left: 6%;
+    /* clip-path: polygon(20% 50%, 100% 0%, 100% 100%); */
+    transform: translate(0%,-50%);
+}
+#btn_left span{
+    border-radius: 50%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+}
+
+#popup_box{
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    font-style: italic;
+    /* text-transform: uppercase; */
+    /* letter-spacing: .6em; */
+    /* font-style: oblique; */
+    transform: translate(-50%,-50%) rotate(-90deg);
+    color: rgb(25, 213, 0);
+    transition: .4s;
+    opacity: 0;
+}
+
+#start_btn, #result{
+    position: absolute;
+    height: 100vw;
+    width: 100vh;
+    border: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) rotate(-90deg);
+    text-transform: uppercase;
+    /* font-size: 1rem;
+    */
+    font-weight: 600;
+    color: rgb(255, 255, 255);
+    background: rgba(0, 0, 0, 0.8);
+    font-size: 2rem;
+    
+    /* border: 2px solid rgb(0, 0, 0); */
+    z-index: 100;
+    transition: .3s;
+}
+#result{
+    z-index: 1000;
+    display: none;
+    background: #daae00;
+}
+.snake,.snake2{
+    /* background: radial-gradient(rgb(255, 252, 206) 0%,rgb(196, 218, 0) 50%,rgb(238, 135, 0)); */
+    background: var(--body_color);
+    border-radius: 50%;
+    /* transform: scale(); */
+    /* box-shadow: 0px 0px 8px rgb(229, 255, 0); */
+}
+.snake2{
+    background: var(--body_color2);
+}
+
+.head,.head2{
+    /* box-shadow: 0px 0px 8px rgb(229, 255, 0); */
+    /* border-top: .7rem solid rgb(168, 0, 0); */
+    transform: rotate(0deg) scale(1);
+    background: var(--body_color);
+    clip-path: polygon(50% 59%, 80% 10%, 100% 37%, 96% 68%, 80% 90%, 50% 100%, 20% 90%, 5% 69%, 0 38%, 20% 10%);
+}
+.head2{
+    background: var(--body_color2);
+}
+.down{
+    transform: rotate(180deg);
+}
+.left{
+    transform: rotate(-90deg);
+}
+.right{
+    transform: rotate(90deg);
+}
+
+
+.food{
+    background-color: var(--food_color);
+    border-radius: 50%;
+    box-shadow: 0px 0px 4px 6px var(--food_color);
+    transform: scale(.4);
+}
+
+
+@media (min-width:768px) and (max-width:1023px) {
+    #board_cont{
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+    #popup_box{
+        top: 30%;
+        left: 32%;
+        transform: translate(-50%,-50%);
+    }
+    #start_btn{
+        top: 50%;
+        left: 32%;
+        transform: translate(-50%,-50%);
+    }
+    #board{
+        width: 70vmin;
+        height: 70vmin;
+    }
+    #scorediv{
+        left: -18%;
+        /* left: 50%; */
+        /* transform: translateX(-100%); */
+    }
+}
+@media (min-width:1024px){
+    #playb_box{
+        display: none;
+    }
+    #scorediv{
+        width: max-content;
+        flex-direction: column;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.4rem;
+        left: 2rem;
+        padding: 2%;
+    }
+    #board_cont {
+        /* padding: 0%; */
+    }
+}
