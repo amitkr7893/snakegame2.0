@@ -14,6 +14,7 @@
 body{
     height: 100vh;
     width: 100vw;
+    overflow: hidden;
     /* background: linear-gradient(45deg, rgb(69, 14, 39),rgb(11, 0, 37)); */
     /* background-size: .6rem .6rem;
      */
@@ -161,7 +162,7 @@ body{
     opacity: 0;
 }
 
-#start_btn, #result{
+#start_btn, #result,#take_full{
     position: absolute;
     height: 100vw;
     width: 100vh;
@@ -185,6 +186,11 @@ body{
     z-index: 1000;
     display: none;
     background: #daae00;
+}
+#take_full{
+    background-color: transparent;
+    /* opacity: 1; */
+    z-index: 10000;
 }
 .snake,.snake2{
     /* background: radial-gradient(rgb(255, 252, 206) 0%,rgb(196, 218, 0) 50%,rgb(238, 135, 0)); */

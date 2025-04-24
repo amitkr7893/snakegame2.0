@@ -468,24 +468,6 @@ if ("serviceWorker" in navigator) {
   
 
 // to force full screen
-//   function goFullScreen() {
-//     const elem = document.body; // this makes the whole page fullscreen
-//     if (elem.requestFullscreen) {
-//       elem.requestFullscreen();
-//     } else if (elem.webkitRequestFullscreen) { /* Safari */
-//       elem.webkitRequestFullscreen();
-//     } else if (elem.msRequestFullscreen) { /* IE11 */
-//       elem.msRequestFullscreen();
-//     }
-//   }
-  
-  // Call this when user taps the start button
-//   start_btn.addEventListener("click", () => {
-//     goFullScreen();
-//     start(); // or whatever function starts your game
-//   });
-  
-
   function goFullScreen() {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
@@ -495,20 +477,11 @@ if ("serviceWorker" in navigator) {
     } else if (elem.msRequestFullscreen) {
       elem.msRequestFullscreen();
     }
-  
-    // Optional: Try to lock landscape mode
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.lock("landscape").catch((err) => {
-        console.warn("Orientation lock failed:", err);
-      });
-    }
   }
   
-  // Attach to your start button
-//   const startBtn = document.getElementById("start_btn");
-  
-  start_btn.addEventListener("click", () => {
+  const take_full = document.getElementById("take_full");
+  take_full.addEventListener("click", () => {
     goFullScreen();
-    startGame(); // Your game start logic here
+    take_full.style.display = "none";
   });
   
