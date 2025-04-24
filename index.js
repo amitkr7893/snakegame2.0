@@ -469,7 +469,7 @@ if ("serviceWorker" in navigator) {
 
 // to force full screen
   function goFullScreen() {
-    const elem = document.documentElement; // this makes the whole page fullscreen
+    const elem = document.body; // this makes the whole page fullscreen
     if (elem.requestFullscreen) {
       elem.requestFullscreen();
     } else if (elem.webkitRequestFullscreen) { /* Safari */
