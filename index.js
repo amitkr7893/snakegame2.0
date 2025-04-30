@@ -43,7 +43,7 @@ const cl = [
     "#da005b",
 ];
 
-let i = Math.floor(Math.random() * (6 - 0 + 1) - 0);
+let i = Math.floor(Math.random() * cl.length);
 let j = i;
 document.documentElement.style.setProperty("--food_color", cl[i]);
 
@@ -425,6 +425,7 @@ function start() {
 
 
 // for the mobile control
+  
 function fun(x, p) {
     if (p === 'p1' && !dirChanged) {
         if (x === "u" && inputDir.y !== 1) {
@@ -452,6 +453,14 @@ function fun(x, p) {
         click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
     }
 }
+
+document.querySelectorAll('.play_btn').forEach(btn => {
+    btn.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // prevent zoom, scroll, etc.
+    console.log(`Touched button: ${btn.id}`);
+    fun();
+  }, { passive: false });
+});
 
 
 // to force full screen
@@ -509,3 +518,29 @@ function fun(x, p) {
     });
 // }
 
+
+
+// // ✅ Multitouch support for on-screen buttons
+// function handleTouchStartMultitouch(event) {
+//     for (let touch of event.changedTouches) {
+//       const targetId = touch.target.id;
+  
+//       // Player 1 controls
+//       if (targetId === "up1") changeDirection1("UP");
+//       if (targetId === "down1") changeDirection1("DOWN");
+//       if (targetId === "left1") changeDirection1("LEFT");
+//       if (targetId === "right1") changeDirection1("RIGHT");
+  
+//       // Player 2 controls
+//       if (targetId === "up2") changeDirection2("UP");
+//       if (targetId === "down2") changeDirection2("DOWN");
+//       if (targetId === "left2") changeDirection2("LEFT");
+//       if (targetId === "right2") changeDirection2("RIGHT");
+//     }
+//   }
+  
+//   // ✅ Attach touch event to all control buttons
+//   document.querySelectorAll("button").forEach(button => {
+//     button.addEventListener("touchstart", handleTouchStartMultitouch, { passive: true });
+//   });
+  

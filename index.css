@@ -96,43 +96,43 @@ body{
 /* #start_btn:hover,.play_btn:hover{ */
     /* opacity: .7; */
 /* } */
-#btn_up{
+#btn_up1,#btn_up2{
     top: 6%;
     left: 50%;
     /* clip-path: polygon(100% 100%, 0% 100%, 50% 20%); */
     transform: translate(-50%,0%);
 }
-#btn_right{
+#btn_right1,#btn_right2{
     top: 50%;
     left: 94%;
     /* clip-path: polygon(80% 50%, 0% 0%, 0% 100%); */
     transform: translate(-100%,-50%);
 }
-#btn_right span{
+#btn_right1 span,#btn_right2 span{
     border-radius: 50%;
     border-top-left-radius: 0%;
     border-bottom-left-radius: 0%;
     
 }
-#btn_down{
+#btn_down1, #btn_down2{
     bottom: 6%;
     left: 50%;
     /* clip-path: polygon(50% 80%, 0% 0%, 100% 0%); */
     transform: translate(-50%,0%);
 }
-#btn_down span{
+#btn_down1 span, #btn_down2 span{
     border-radius: 50%;
     border-top-left-radius: 0%;
     border-top-right-radius: 0%;
     
 }
-#btn_left{
+#btn_left1, #btn_left2{
     top: 50%;
     left: 6%;
     /* clip-path: polygon(20% 50%, 100% 0%, 100% 100%); */
     transform: translate(0%,-50%);
 }
-#btn_left span{
+#btn_left1 span, #btn_left2 span{
     border-radius: 50%;
     border-top-right-radius: 0%;
     border-bottom-right-radius: 0%;
