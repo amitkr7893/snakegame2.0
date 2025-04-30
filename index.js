@@ -3,7 +3,7 @@ let inputDir = { x: 0, y: 0 };
 let inputDir2 = { x: 0, y: 0 };
 let lastPaintTime = 0;
 let collide = false;
-var myspeed;
+let myspeed;
 let speed = 3;
 let score1 = 0;
 let score2 = 0;
@@ -56,20 +56,19 @@ function change_color() {
 }
 
 // Game functions//
+let isPause = false;
 function speedup() {
+    if (isPause) return;
     if (speed < 10) {
         speed += 1;
         bgmusic.playbackRate += 0.05;
-        speedsound.play();
-        if (speed == 10) {
-            document.getElementById("popup_box").innerText = "Reached MAX Speed";
-            document.getElementById("popup_box").style.opacity = "1";
-        } else {
-            document.getElementById("popup_box").innerText = "Speed Up >>>>";
-            document.getElementById("popup_box").style.opacity = "1";
-        }
+        speedsound.play().catch(err => { if (err.name !== "AbortError") console.error(err); });;
+        document.getElementById("board").style.border = "2px solid rgb(0, 199, 0)";
+        document.getElementById("board").style.boxShadow = "0 0 6px rgb(0, 199, 0),inset 0 0 6px rgb(0, 199, 0);";
+        
         setTimeout(() => {
-            document.getElementById("popup_box").style.opacity = "0";
+            document.getElementById("board").style.border = "2px solid rgb(199, 0, 0)";
+            document.getElementById("board").style.boxShadow = "0 0 6px rgb(199, 0, 0),inset 0 0 6px rgb(199, 0, 0);";
         }, 1500);
     }
 }
@@ -85,60 +84,111 @@ function main(cTime) {
     }
 }
 
-function isCollide(snake,snake2) {
-    // if snake is eat own body
+
+let sn1 = false;
+let sn2 = false;
+function isCollide(snake, snake2) {
+    // if snake1 is eat own body
     for (let i = 1; i < snake.length; i++) {
-        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-            return true;
-        }
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) sn1 = true;
     }
-    //if snake hit the wall
+    // if snake2 is eat own body
+    for (let i = 1; i < snake2.length; i++) {
+        if (snake2[i].x === snake2[0].x && snake2[i].y === snake2[0].y) sn2 = true;
+    }
+
+    //if snake1 hit the wall
     if (
         snake[0].x > 30 ||
         snake[0].x <= 0 ||
         snake[0].y > 30 ||
         snake[0].y <= 0
-    ) {
-        return true;
+    ){
+        sn1 = true;
+        
+    }
+    //if snake2 hit the wall
+    if (
+        snake2[0].x > 30 ||
+        snake2[0].x <= 0 ||
+        snake2[0].y > 30 ||
+        snake2[0].y <= 0
+    ) sn2 = true;
+
+    //if snake1 hits the snake2
+    for (let i = 0; i < snake2.length; i++) {
+        if (snake[0].x === snake2[i].x && snake[0].y === snake2[i].y) sn1 = true;
+    }
+    //if snake2 hits the snake1
+    for (let i = 0; i < snake.length; i++) {
+        if (snake2[0].x === snake[i].x && snake2[0].y === snake[i].y) sn2 = true;
     }
 
-    //if snake hits the snake2
-    for (let i = 0; i < snake2.length; i++) {
-        if (snake[0].x === snake2[i].x && snake[0].y === snake2[i].y) {
-            return true;
-        }
-    }
 }
 
 let dirChanged = false;
 let dirChanged2 = false;
+let pendingDir1 = null;
+let pendingDir2 = null;
 
 let start_btn = document.getElementById("start_btn");
 let result = document.getElementById("result");
 
-result.addEventListener('click',()=>{
+result.addEventListener('click', () => {
     result.style.display = 'none';
 })
 
-function gameEngine() {
-    dirChanged = false;
-    dirChanged2 = false;
-    //if the snake1 eaten the food
-    if (snakeArr[0].x === food.x && snakeArr[0].y === food.y) {
-        let a = 1;
-        let b = 30;
-        eat.play();
-        change_color();
+function generate_food() {
+    let a = 1;
+    let b = 30;
+    let valid = false;
+    let foodx, foody;
+
+    while (!valid) {
+        foodx = Math.round(a + (b - a) * Math.random());
+        foody = Math.round(a + (b - a) * Math.random());
+        valid = true;
+        // Check against snake1 body
         for (let i = 0; i < snakeArr.length; i++) {
-            let foodx = Math.round(a + (b - a) * Math.random());
-            let foody = Math.round(a + (b - a) * Math.random());
-            if (foodx === snakeArr[i].x && foody === snakeArr[i].y) {
-                i = 0;
-                continue;
-            } else {
-                food = { x: foodx, y: foody };
+            if (snakeArr[i].x === foodx && snakeArr[i].y === foody) {
+                valid = false;
+                break;
             }
         }
+        // Check against snake2 body
+        if (valid) {
+            for (let i = 0; i < snakeArr2.length; i++) {
+                if (snakeArr2[i].x === foodx && snakeArr2[i].y === foody) {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    return { x: foodx, y: foody };
+}
+
+function gameEngine() {
+
+    if (pendingDir1 && !dirChanged) {
+        inputDir = pendingDir1;
+        pendingDir1 = null;
+        dirChanged = true;
+    }
+    if (pendingDir2 && !dirChanged2) {
+        inputDir2 = pendingDir2;
+        pendingDir2 = null;
+        dirChanged2 = true;
+    }
+    //if the snake1 eaten the food
+    if (snakeArr[0].x === food.x && snakeArr[0].y === food.y) {
+
+        eat.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+
+        change_color();
+        food = generate_food();
+
         score1 += 1;
         scorebox1.innerHTML = "score = " + score1;
 
@@ -148,23 +198,14 @@ function gameEngine() {
             y: snakeArr[0].y + inputDir.y,
         });
     }
-
     //if snake2 eaten the food
     if (snakeArr2[0].x === food.x && snakeArr2[0].y === food.y) {
-        let a = 1;
-        let b = 30;
-        eat.play();
+    
+        eat.play().catch(err => { if (err.name !== "AbortError") console.error(err); });;
+        
         change_color();
-        for (let i = 0; i < snakeArr2.length; i++) {
-            let foodx = Math.round(a + (b - a) * Math.random());
-            let foody = Math.round(a + (b - a) * Math.random());
-            if (foodx === snakeArr2[i].x && foody === snakeArr2[i].y) {
-                i = 0;
-                continue;
-            } else {
-                food = { x: foodx, y: foody };
-            }
-        }
+        food = generate_food();
+
         score2 += 1;
         scorebox2.innerHTML = "score = " + score2;
 
@@ -175,39 +216,57 @@ function gameEngine() {
         });
     }
 
+    isCollide(snakeArr,snakeArr2);
     //update the snake array
-    //moving the sanake
-    for (let i = snakeArr.length - 2; i >= 0; i--) {
-        snakeArr[i + 1] = { ...snakeArr[i] };
+    //moving the snake
+    const nextX1 = snakeArr[0].x + inputDir.x;
+    const nextY1 = snakeArr[0].y + inputDir.y;
+    const nextX2 = snakeArr2[0].x + inputDir2.x;
+    const nextY2 = snakeArr2[0].y + inputDir2.y;
+
+    sn1 = sn1 || (nextX1 <= 0 || nextX1 > 30 || nextY1 <= 0 || nextY1 > 30);
+    sn2 = sn2 || (nextX2 <= 0 || nextX2 > 30 || nextY2 <= 0 || nextY2 > 30);
+
+    if(!sn1){
+        for (let i = snakeArr.length - 2; i >= 0; i--) {
+            snakeArr[i + 1] = { ...snakeArr[i] };
+        }
+        snakeArr[0].x = nextX1;
+        snakeArr[0].y = nextY1;
     }
-    snakeArr[0].x += inputDir.x;
-    snakeArr[0].y += inputDir.y;
 
     // for 2nd snake
-    for (let i = snakeArr2.length - 2; i >= 0; i--) {
-        snakeArr2[i + 1] = { ...snakeArr2[i] };
+    if(!sn2){
+        for (let i = snakeArr2.length - 2; i >= 0; i--) {        
+            snakeArr2[i + 1] = { ...snakeArr2[i] };
+        }
+        snakeArr2[0].x = nextX2;
+        snakeArr2[0].y = nextY2;
     }
-    snakeArr2[0].x += inputDir2.x;
-    snakeArr2[0].y += inputDir2.y;
 
-    if (isCollide(snakeArr, snakeArr2) || isCollide(snakeArr2, snakeArr)) {
+    dirChanged = false;
+    dirChanged2 = false;
+
+    if (sn1 && sn2) {
+        sn1 = false;
+        sn2 = false;
         collide = true;
-        hit.play();
+        hit.play().catch(err => { if (err.name !== "AbortError") console.error(err); });;
         bgmusic.pause();
         clearInterval(myspeed);
         inputDir = { x: 0, y: 0 };
         inputDir2 = { x: 0, y: 0 };
 
         let win_msg = "";
-        if(score1 > score2){
+        if (score1 > score2) {
             win_msg = "Player 1 Wins";
             result.style.backgroundColor = "#ea371c";
         }
-        else if(score1 < score2){
+        else if (score1 < score2) {
             win_msg = "Player 2 Wins";
             result.style.backgroundColor = "#2590ee";
         }
-        else{
+        else {
             win_msg = "Its a Draw";
             result.style.backgroundColor = "#daae00";
         }
@@ -215,7 +274,7 @@ function gameEngine() {
         result.innerText = win_msg;
         start_btn.style.display = "block";
         result.style.display = "block";
-        
+
         speed = 3;
         snakeArr = [
             { x: 20, y: 22 },
@@ -282,40 +341,33 @@ function gameEngine() {
     foodElement.style.gridColumnStart = food.x;
     foodElement.classList.add("food");
     board.appendChild(foodElement);
-
-    // if (score > hiscoreval) {
-    //     hiscoreval = score;
-    //     localStorage.setItem("hiscore", JSON.stringify(hiscoreval));
-    //     hiscorebox.innerHTML = "Hi score = " + hiscoreval;
-    // }
 }
 
 //main logic is here
 //to update the screen for animation
 // window.requestAnimationFrame(main);
 
+let scorebox1 = document.getElementById('scorebox1');
+let scorebox2 = document.getElementById('scorebox2');
+
 function start() {
     bgmusic.currentTime = 0;
     bgmusic.playbackRate = 1;
     bgmusic.loop = true;
-    bgmusic.play();
+    bgmusic.play().catch(err => { if (err.name !== "AbortError") console.error(err); });;
 
     collide = false;
 
-    startclick.play();
+    startclick.play().catch(err => { if (err.name !== "AbortError") console.error(err); });;
     score1 = 0;
     score2 = 0;
     scorebox1.innerHTML = "score = " + score1;
     scorebox2.innerHTML = "score = " + score2;
-    // document.documentElement.style.setProperty("--body_color", "white");
-    // document.documentElement.style.setProperty("--body_color", "white");
 
     myspeed = setInterval(speedup, 20000);
 
     start_btn.style.display = 'none';
-    // setTimeout(() => {
-        // document.getElementById("start_btn").style.display = "none";
-    // }, 400);
+   
     window.requestAnimationFrame(main);
 
     inputDir = { x: 0, y: -1 };
@@ -324,164 +376,136 @@ function start() {
     window.addEventListener("keydown", (e) => {
         if (!dirChanged) {
             if (e.key === "ArrowUp" && inputDir.y !== 1) {
-                inputDir.x = 0;
-                inputDir.y = -1;
-                click.play();
+                inputDir = { x: 0, y: -1 };
+                dirChanged = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
             if (e.key === "ArrowRight" && inputDir.x !== -1) {
-                inputDir.x = 1;
-                inputDir.y = 0;
-                click.play();
+                inputDir = { x: 1, y: 0 };
+                dirChanged = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
             if (e.key === "ArrowDown" && inputDir.y !== -1) {
-                inputDir.x = 0;
-                inputDir.y = 1;
-                click.play();
+                inputDir = { x: 0, y: 1 };
+                dirChanged = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
             if (e.key === "ArrowLeft" && inputDir.x !== 1) {
-                inputDir.x = -1;
-                inputDir.y = 0;
-                click.play();
+                inputDir = { x: -1, y: 0 };
+                dirChanged = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
         }
-
-        // Player 2 (WASD Keys)
+    
         if (!dirChanged2) {
-            if (e.key === "w" || e.key === "W") {
-                if (inputDir2.y !== 1) {
-                    inputDir2.x = 0;
-                    inputDir2.y = -1;
-                    click.play();
-                }
+            if ((e.key === "w" || e.key === "W") && inputDir2.y !== 1) {
+                inputDir2 = { x: 0, y: -1 };
+                dirChanged2 = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
-            if (e.key === "d" || e.key === "D") {
-                if (inputDir2.x !== -1) {
-                    inputDir2.x = 1;
-                    inputDir2.y = 0;
-                    click.play();
-                }
+            if ((e.key === "d" || e.key === "D") && inputDir2.x !== -1) {
+                inputDir2 = { x: 1, y: 0 };
+                dirChanged2 = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
-            if (e.key === "s" || e.key === "S") {
-                if (inputDir2.y !== -1) {
-                    inputDir2.x = 0;
-                    inputDir2.y = 1;
-                    click.play();
-                }
+            if ((e.key === "s" || e.key === "S") && inputDir2.y !== -1) {
+                inputDir2 = { x: 0, y: 1 };
+                dirChanged2 = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
-            if (e.key === "a" || e.key === "A") {
-                if (inputDir2.x !== 1) {
-                    inputDir2.x = -1;
-                    inputDir2.y = 0;
-                    click.play();
-                }
+            if ((e.key === "a" || e.key === "A") && inputDir2.x !== 1) {
+                inputDir2 = { x: -1, y: 0 };
+                dirChanged2 = true;
+                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
             }
         }
     });
+    
 }
 
 
-
-
-// let hiscore = localStorage.getItem("hiscore");
-// if (hiscore === null) {
-    // hiscoreval = 0;
-    // localStorage.setItem("hiscore", JSON.stringify(hiscoreval));
-// } else {
-    // hiscoreval = JSON.parse(hiscore);
-    // hiscorebox.innerHTML = "Hi score = " + hiscore;
-// }
-
-function fun(x,p) {
-    if(p=='p1'){
-        if (x === "u") {
-            if (inputDir.y === 1) {
-                return;
-            }
-            inputDir.x = 0;
-            inputDir.y = -1;
-            click.play();
-        } else if (x === "r") {
-            if (inputDir.x === -1) {
-                return;
-            }
-            inputDir.x = 1;
-            inputDir.y = 0;
-            click.play();
-        } else if (x === "d") {
-            if (inputDir.y === -1) {
-                return;
-            }
-            inputDir.x = 0;
-            inputDir.y = 1;
-            click.play();
-        } else if (x === "l") {
-            if (inputDir.x === 1) {
-                return;
-            }
-            inputDir.x = -1;
-            inputDir.y = 0;
-            click.play();
+// for the mobile control
+function fun(x, p) {
+    if (p === 'p1' && !dirChanged) {
+        if (x === "u" && inputDir.y !== 1) {
+            pendingDir1 = { x: 0, y: -1 };
+        } else if (x === "r" && inputDir.x !== -1) {
+            pendingDir1 = { x: 1, y: 0 };
+        } else if (x === "d" && inputDir.y !== -1) {
+            pendingDir1 = { x: 0, y: 1 };
+        } else if (x === "l" && inputDir.x !== 1) {
+            pendingDir1 = { x: -1, y: 0 };
         }
+        click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
     }
-    if(p=='p2'){
-        if (x === "u") {
-            if (inputDir2.y === 1) {
-                return;
-            }
-            inputDir2.x = 0;
-            inputDir2.y = -1;
-            click.play();
-        } else if (x === "r") {
-            if (inputDir2.x === -1) {
-                return;
-            }
-            inputDir2.x = 1;
-            inputDir2.y = 0;
-            click.play();
-        } else if (x === "d") {
-            if (inputDir2.y === -1) {
-                return;
-            }
-            inputDir2.x = 0;
-            inputDir2.y = 1;
-            click.play();
-        } else if (x === "l") {
-            if (inputDir2.x === 1) {
-                return;
-            }
-            inputDir2.x = -1;
-            inputDir2.y = 0;
-            click.play();
+
+    if (p === 'p2' && !dirChanged2) {
+        if (x === "u" && inputDir2.y !== 1) {
+            pendingDir2 = { x: 0, y: -1 };
+        } else if (x === "r" && inputDir2.x !== -1) {
+            pendingDir2 = { x: 1, y: 0 };
+        } else if (x === "d" && inputDir2.y !== -1) {
+            pendingDir2 = { x: 0, y: 1 };
+        } else if (x === "l" && inputDir2.x !== 1) {
+            pendingDir2 = { x: -1, y: 0 };
         }
+        click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
     }
 }
 
-// To Register the Service Worker in index.js
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/service-worker.js")
-        .then((reg) => console.log("Service Worker registered", reg))
-        .catch((err) => console.error("Service Worker registration failed", err));
-    });
-  }
-  
 
 // to force full screen
-  function goFullScreen() {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
+
+// console.log(document.fullscreenElement);
+// if (window.innerWidth <= 425) {
+    function goFullScreen() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
     }
-  }
-  
-  const take_full = document.getElementById("take_full");
-  take_full.addEventListener("click", () => {
-    goFullScreen();
-    take_full.style.display = "none";
-  });
-  
+
+    const take_full = document.getElementById("take_full");
+    take_full.addEventListener("click", () => {
+        goFullScreen();
+        take_full.style.display = "none";
+    });
+
+
+    let flg = 0;
+    document.addEventListener("fullscreenchange", () => {
+
+        if (!flg) flg = 1;
+        else {
+
+            if (document.fullscreenElement) {
+                if(start_btn.style.display == 'none'){
+                    collide = false;
+                    isPause = false;
+                    bgmusic.play().catch(err => { if (err.name !== "AbortError") console.error(err); });;
+                    take_full.innerHTML = "";
+                    take_full.style.background = "transparent";
+                    requestAnimationFrame(main);
+                }
+                take_full.style.display = "none";
+                // console.log("User Entered the page");
+            }
+            else {
+                if (start_btn.style.display == 'none') {
+                    collide = true;
+                    isPause = true;
+                    take_full.innerHTML = "Resume";
+                    take_full.style.background = "rgb(0,0,0,0.8)";
+                    bgmusic.pause();
+                }
+                take_full.style.display = "block";
+                // console.log("User left the page");
+            }
+        }
+    });
+// }
+
