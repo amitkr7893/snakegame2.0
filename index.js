@@ -1,6 +1,10 @@
 // Game constant and variables
 let inputDir = { x: 0, y: 0 };
 let inputDir2 = { x: 0, y: 0 };
+
+// let inputQueue1 = [];
+// let inputQueue2 = [];
+
 let lastPaintTime = 0;
 let collide = false;
 let myspeed;
@@ -181,6 +185,18 @@ function gameEngine() {
         pendingDir2 = null;
         dirChanged2 = true;
     }
+
+    // Process Player 1's Input
+    // if (inputQueue1.length > 0 && !dirChanged) {
+    //     inputDir = inputQueue1.shift(); // Get the next direction for player 1
+    //     dirChanged = true;
+    // }
+    
+    // // Process Player 2's Input
+    // if (inputQueue2.length > 0 && !dirChanged2) {
+    //     inputDir2 = inputQueue2.shift(); // Get the next direction for player 2
+    //     dirChanged2 = true;
+    // }
     //if the snake1 eaten the food
     if (snakeArr[0].x === food.x && snakeArr[0].y === food.y) {
 
@@ -374,52 +390,40 @@ function start() {
     inputDir2 = { x: 0, y: 1 };
 
     window.addEventListener("keydown", (e) => {
+        // Player 1 Inputs
         if (!dirChanged) {
             if (e.key === "ArrowUp" && inputDir.y !== 1) {
-                inputDir = { x: 0, y: -1 };
-                dirChanged = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("u", "p1");  // 'u' for up and 'p1' for Player 1
             }
             if (e.key === "ArrowRight" && inputDir.x !== -1) {
-                inputDir = { x: 1, y: 0 };
-                dirChanged = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("r", "p1");  // 'r' for right and 'p1' for Player 1
             }
             if (e.key === "ArrowDown" && inputDir.y !== -1) {
-                inputDir = { x: 0, y: 1 };
-                dirChanged = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("d", "p1");  // 'd' for down and 'p1' for Player 1
             }
             if (e.key === "ArrowLeft" && inputDir.x !== 1) {
-                inputDir = { x: -1, y: 0 };
-                dirChanged = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("l", "p1");  // 'l' for left and 'p1' for Player 1
             }
         }
     
+        // Player 2 Inputs
         if (!dirChanged2) {
             if ((e.key === "w" || e.key === "W") && inputDir2.y !== 1) {
-                inputDir2 = { x: 0, y: -1 };
-                dirChanged2 = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("u", "p2");  // 'u' for up and 'p2' for Player 2
             }
             if ((e.key === "d" || e.key === "D") && inputDir2.x !== -1) {
-                inputDir2 = { x: 1, y: 0 };
-                dirChanged2 = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("r", "p2");  // 'r' for right and 'p2' for Player 2
             }
             if ((e.key === "s" || e.key === "S") && inputDir2.y !== -1) {
-                inputDir2 = { x: 0, y: 1 };
-                dirChanged2 = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("d", "p2");  // 'd' for down and 'p2' for Player 2
             }
             if ((e.key === "a" || e.key === "A") && inputDir2.x !== 1) {
-                inputDir2 = { x: -1, y: 0 };
-                dirChanged2 = true;
-                click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+                fun("l", "p2");  // 'l' for left and 'p2' for Player 2
             }
         }
     });
+    
+    
     
 }
 
@@ -520,43 +524,45 @@ function fun(x, p) {
 
 
 
-// This function will be triggered on touchstart for all control buttons
 function handleTouchStartMultitouch(event) {
     for (let touch of event.changedTouches) {
-      const targetId = touch.target.id;
-  
-      // Player 1 controls
-      if (targetId === "up1") {
-        fun("u", "p1");  // 'u' for up and 'p1' for Player 1
-      }
-      if (targetId === "down1") {
-        fun("d", "p1");  // 'd' for down and 'p1' for Player 1
-      }
-      if (targetId === "left1") {
-        fun("l", "p1");  // 'l' for left and 'p1' for Player 1
-      }
-      if (targetId === "right1") {
-        fun("r", "p1");  // 'r' for right and 'p1' for Player 1
-      }
-  
-      // Player 2 controls
-      if (targetId === "up2") {
-        fun("u", "p2");  // 'u' for up and 'p2' for Player 2
-      }
-      if (targetId === "down2") {
-        fun("d", "p2");  // 'd' for down and 'p2' for Player 2
-      }
-      if (targetId === "left2") {
-        fun("l", "p2");  // 'l' for left and 'p2' for Player 2
-      }
-      if (targetId === "right2") {
-        fun("r", "p2");  // 'r' for right and 'p2' for Player 2
-      }
+        const targetId = touch.target.id;
+
+        // Player 1 Controls
+        if (!dirChanged) {
+            if (targetId === "up1" && inputDir.y !== 1) {
+                fun("u", "p1");  // 'u' for up and 'p1' for Player 1
+            }
+            if (targetId === "right1" && inputDir.x !== -1) {
+                fun("r", "p1");  // 'r' for right and 'p1' for Player 1
+            }
+            if (targetId === "down1" && inputDir.y !== -1) {
+                fun("d", "p1");  // 'd' for down and 'p1' for Player 1
+            }
+            if (targetId === "left1" && inputDir.x !== 1) {
+                fun("l", "p1");  // 'l' for left and 'p1' for Player 1
+            }
+        }
+
+        // Player 2 Controls
+        if (!dirChanged2) {
+            if (targetId === "up2" && inputDir2.y !== 1) {
+                fun("u", "p2");  // 'u' for up and 'p2' for Player 2
+            }
+            if (targetId === "right2" && inputDir2.x !== -1) {
+                fun("r", "p2");  // 'r' for right and 'p2' for Player 2
+            }
+            if (targetId === "down2" && inputDir2.y !== -1) {
+                fun("d", "p2");  // 'd' for down and 'p2' for Player 2
+            }
+            if (targetId === "left2" && inputDir2.x !== 1) {
+                fun("l", "p2");  // 'l' for left and 'p2' for Player 2
+            }
+        }
     }
-  }
-  
-  // ✅ Attach touch event to all control buttons
-  document.querySelectorAll(".play_btn").forEach(button => {
+}
+
+// ✅ Attach touch event to all control buttons
+document.querySelectorAll(".play_btn").forEach(button => {
     button.addEventListener("touchstart", handleTouchStartMultitouch, { passive: true });
-  });
-  
+});
