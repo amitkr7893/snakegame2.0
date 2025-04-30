@@ -454,13 +454,13 @@ function fun(x, p) {
     }
 }
 
-document.querySelectorAll('.play_btn').forEach(btn => {
-    btn.addEventListener('touchstart', (e) => {
-    e.preventDefault(); // prevent zoom, scroll, etc.
-    console.log(`Touched button: ${btn.id}`);
-    fun();
-  }, { passive: false });
-});
+// document.querySelectorAll('.play_btn').forEach(btn => {
+//     btn.addEventListener('touchstart', (e) => {
+//     e.preventDefault(); // prevent zoom, scroll, etc.
+//     console.log(`Touched button: ${btn.id}`);
+//     fun();
+//   }, { passive: false });
+// });
 
 
 // to force full screen
@@ -520,27 +520,43 @@ document.querySelectorAll('.play_btn').forEach(btn => {
 
 
 
-// // ✅ Multitouch support for on-screen buttons
-// function handleTouchStartMultitouch(event) {
-//     for (let touch of event.changedTouches) {
-//       const targetId = touch.target.id;
+// This function will be triggered on touchstart for all control buttons
+function handleTouchStartMultitouch(event) {
+    for (let touch of event.changedTouches) {
+      const targetId = touch.target.id;
   
-//       // Player 1 controls
-//       if (targetId === "up1") changeDirection1("UP");
-//       if (targetId === "down1") changeDirection1("DOWN");
-//       if (targetId === "left1") changeDirection1("LEFT");
-//       if (targetId === "right1") changeDirection1("RIGHT");
+      // Player 1 controls
+      if (targetId === "up1") {
+        fun("u", "p1");  // 'u' for up and 'p1' for Player 1
+      }
+      if (targetId === "down1") {
+        fun("d", "p1");  // 'd' for down and 'p1' for Player 1
+      }
+      if (targetId === "left1") {
+        fun("l", "p1");  // 'l' for left and 'p1' for Player 1
+      }
+      if (targetId === "right1") {
+        fun("r", "p1");  // 'r' for right and 'p1' for Player 1
+      }
   
-//       // Player 2 controls
-//       if (targetId === "up2") changeDirection2("UP");
-//       if (targetId === "down2") changeDirection2("DOWN");
-//       if (targetId === "left2") changeDirection2("LEFT");
-//       if (targetId === "right2") changeDirection2("RIGHT");
-//     }
-//   }
+      // Player 2 controls
+      if (targetId === "up2") {
+        fun("u", "p2");  // 'u' for up and 'p2' for Player 2
+      }
+      if (targetId === "down2") {
+        fun("d", "p2");  // 'd' for down and 'p2' for Player 2
+      }
+      if (targetId === "left2") {
+        fun("l", "p2");  // 'l' for left and 'p2' for Player 2
+      }
+      if (targetId === "right2") {
+        fun("r", "p2");  // 'r' for right and 'p2' for Player 2
+      }
+    }
+  }
   
-//   // ✅ Attach touch event to all control buttons
-//   document.querySelectorAll("button").forEach(button => {
-//     button.addEventListener("touchstart", handleTouchStartMultitouch, { passive: true });
-//   });
+  // ✅ Attach touch event to all control buttons
+  document.querySelectorAll(".play_btn").forEach(button => {
+    button.addEventListener("touchstart", handleTouchStartMultitouch, { passive: true });
+  });
   
