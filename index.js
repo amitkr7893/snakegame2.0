@@ -393,33 +393,35 @@ function start() {
         // Player 1 Inputs
         if (!dirChanged) {
             if (e.key === "ArrowUp" && inputDir.y !== 1) {
-                fun("u", "p1");  // 'u' for up and 'p1' for Player 1
+                pendingDir1 = { x: 0, y: -1 };// 'u' for up and 'p1' for Player 1
             }
             if (e.key === "ArrowRight" && inputDir.x !== -1) {
-                fun("r", "p1");  // 'r' for right and 'p1' for Player 1
+                pendingDir1 = { x: 1, y: 0 };// 'r' for right and 'p1' for Player 1
             }
             if (e.key === "ArrowDown" && inputDir.y !== -1) {
-                fun("d", "p1");  // 'd' for down and 'p1' for Player 1
+                pendingDir1 = { x: 0, y: 1 };// 'd' for down and 'p1' for Player 1
             }
             if (e.key === "ArrowLeft" && inputDir.x !== 1) {
-                fun("l", "p1");  // 'l' for left and 'p1' for Player 1
+                pendingDir1 = { x: -1, y: 0 }; // 'l' for left and 'p1' for Player 1
             }
+            click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
         }
     
         // Player 2 Inputs
         if (!dirChanged2) {
             if ((e.key === "w" || e.key === "W") && inputDir2.y !== 1) {
-                fun("u", "p2");  // 'u' for up and 'p2' for Player 2
+                pendingDir2 = { x: 0, y: -1 };// 'u' for up and 'p1' for Player 1
             }
             if ((e.key === "d" || e.key === "D") && inputDir2.x !== -1) {
-                fun("r", "p2");  // 'r' for right and 'p2' for Player 2
+                pendingDir2 = { x: 1, y: 0 };// 'r' for right and 'p1' for Player 1
             }
             if ((e.key === "s" || e.key === "S") && inputDir2.y !== -1) {
-                fun("d", "p2");  // 'd' for down and 'p2' for Player 2
+                pendingDir2 = { x: 0, y: 1 };// 'd' for down and 'p1' for Player 1
             }
             if ((e.key === "a" || e.key === "A") && inputDir2.x !== 1) {
-                fun("l", "p2");  // 'l' for left and 'p2' for Player 2
+                pendingDir2 = { x: -1, y: 0 }; // 'l' for left and 'p1' for Player 1
             }
+            click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
         }
     });
     
@@ -430,41 +432,49 @@ function start() {
 
 // for the mobile control
   
-function fun(x, p) {
-    if (p === 'p1' && !dirChanged) {
-        if (x === "u" && inputDir.y !== 1) {
-            pendingDir1 = { x: 0, y: -1 };
-        } else if (x === "r" && inputDir.x !== -1) {
-            pendingDir1 = { x: 1, y: 0 };
-        } else if (x === "d" && inputDir.y !== -1) {
-            pendingDir1 = { x: 0, y: 1 };
-        } else if (x === "l" && inputDir.x !== 1) {
-            pendingDir1 = { x: -1, y: 0 };
-        }
-        click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
-    }
+function fun(b_id,x, p) {
 
-    if (p === 'p2' && !dirChanged2) {
-        if (x === "u" && inputDir2.y !== 1) {
-            pendingDir2 = { x: 0, y: -1 };
-        } else if (x === "r" && inputDir2.x !== -1) {
-            pendingDir2 = { x: 1, y: 0 };
-        } else if (x === "d" && inputDir2.y !== -1) {
-            pendingDir2 = { x: 0, y: 1 };
-        } else if (x === "l" && inputDir2.x !== 1) {
-            pendingDir2 = { x: -1, y: 0 };
+    const btn = document.getElementById(`${b_id}`);
+    btn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+
+        if (p === 'p1' && !dirChanged) {
+            if (x === "u" && inputDir.y !== 1) {
+                pendingDir1 = { x: 0, y: -1 };
+            } else if (x === "r" && inputDir.x !== -1) {
+                pendingDir1 = { x: 1, y: 0 };
+            } else if (x === "d" && inputDir.y !== -1) {
+                pendingDir1 = { x: 0, y: 1 };
+            } else if (x === "l" && inputDir.x !== 1) {
+                pendingDir1 = { x: -1, y: 0 };
+            }
+            click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
         }
-        click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
-    }
+
+        if (p === 'p2' && !dirChanged2) {
+            if (x === "u" && inputDir2.y !== 1) {
+                pendingDir2 = { x: 0, y: -1 };
+            } else if (x === "r" && inputDir2.x !== -1) {
+                pendingDir2 = { x: 1, y: 0 };
+            } else if (x === "d" && inputDir2.y !== -1) {
+                pendingDir2 = { x: 0, y: 1 };
+            } else if (x === "l" && inputDir2.x !== 1) {
+                pendingDir2 = { x: -1, y: 0 };
+            }
+            click.play().catch(err => { if (err.name !== "AbortError") console.error(err); });
+        }
+    })
 }
 
-// document.querySelectorAll('.play_btn').forEach(btn => {
-//     btn.addEventListener('touchstart', (e) => {
-//     e.preventDefault(); // prevent zoom, scroll, etc.
-//     console.log(`Touched button: ${btn.id}`);
-//     fun();
-//   }, { passive: false });
-// });
+fun('btn_up2','u','p2');
+fun('btn_right2','r','p2');
+fun('btn_down2','d','p2');
+fun('btn_left2','l','p2');
+
+fun('btn_up1','u','p1');
+fun('btn_right1','r','p1');
+fun('btn_down1','d','p1');
+fun('btn_left1','l','p1');
 
 
 // to force full screen
@@ -522,47 +532,3 @@ function fun(x, p) {
     });
 // }
 
-
-
-function handleTouchStartMultitouch(event) {
-    for (let touch of event.changedTouches) {
-        const targetId = touch.target.id;
-
-        // Player 1 Controls
-        if (!dirChanged) {
-            if (targetId === "up1" && inputDir.y !== 1) {
-                fun("u", "p1");  // 'u' for up and 'p1' for Player 1
-            }
-            if (targetId === "right1" && inputDir.x !== -1) {
-                fun("r", "p1");  // 'r' for right and 'p1' for Player 1
-            }
-            if (targetId === "down1" && inputDir.y !== -1) {
-                fun("d", "p1");  // 'd' for down and 'p1' for Player 1
-            }
-            if (targetId === "left1" && inputDir.x !== 1) {
-                fun("l", "p1");  // 'l' for left and 'p1' for Player 1
-            }
-        }
-
-        // Player 2 Controls
-        if (!dirChanged2) {
-            if (targetId === "up2" && inputDir2.y !== 1) {
-                fun("u", "p2");  // 'u' for up and 'p2' for Player 2
-            }
-            if (targetId === "right2" && inputDir2.x !== -1) {
-                fun("r", "p2");  // 'r' for right and 'p2' for Player 2
-            }
-            if (targetId === "down2" && inputDir2.y !== -1) {
-                fun("d", "p2");  // 'd' for down and 'p2' for Player 2
-            }
-            if (targetId === "left2" && inputDir2.x !== 1) {
-                fun("l", "p2");  // 'l' for left and 'p2' for Player 2
-            }
-        }
-    }
-}
-
-// ✅ Attach touch event to all control buttons
-document.querySelectorAll(".play_btn").forEach(button => {
-    button.addEventListener("touchstart", handleTouchStartMultitouch, { passive: true });
-});
